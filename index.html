@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="3600"> <!-- Atualiza a cada 1 hora -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Gamer</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #111; color: #fff; }
+    header { background: #1f1f1f; padding: 20px; text-align: center; }
+    main { padding: 20px; }
+    .noticia { background: #222; margin: 10px 0; padding: 15px; border-radius: 5px; }
+    .noticia h2 { margin-top: 0; color: #00ff99; }
+    .ads { margin: 30px 0; text-align: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Portal Gamer - As Últimas Notícias do Mundo dos Jogos</h1>
+  </header>
+  <main id="noticias">
+    <p>Carregando notícias...</p>
+  </main>
+  <div class="ads">
+    <!-- Simulando um espaço para anúncio -->
+    <iframe src="https://adsense.fake/ad" width="300" height="250" style="border:none;"></iframe>
+  </div>
+
+  <script>
+    async function carregarNoticias() {
+      try {
+        const resposta = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.theverge.com/games/rss/index.xml'));
+        const dados = await resposta.json();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(dados.contents, 'text/xml');
+        const items = xmlDoc.querySelectorAll('item');
+
+        const container = document.getElementById('noticias');
+        container.innerHTML = '';
+
+        items.forEach((item, index) => {
+          if (index >= 5) return; // Mostra só as 5 mais recentes
+          const titulo = item.querySelector('title').textContent;
+          const link = item.querySelector('link').textContent;
+          const descricao = item.querySelector('description').textContent;
+
+          const div = document.createElement('div');
+          div.classList.add('noticia');
+          div.innerHTML = `<h2><a href="${link}" target="_blank" style="color: #00ff99; text-decoration: none;">${titulo}</a></h2><p>${descricao}</p>`;
+          container.appendChild(div);
+        });
+      } catch (erro) {
+        document.getElementById('noticias').innerHTML = '<p>Erro ao carregar notícias.</p>';
+        console.error(erro);
+      }
+    }
+
+    carregarNoticias();
+  </script>
+</body>
+</html>
